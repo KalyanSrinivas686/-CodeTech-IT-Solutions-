@@ -1,0 +1,45 @@
+import java.util.Scanner;
+import java.util.regex.*;
+
+public class SimpleChatbot {
+
+    public static String simpleChatbot(String userInput) {
+        // Define predefined rules and responses
+        String[][] rules = {
+            {"(hi|hello|hey)", "Hello! How can I help you?"},
+            {"how are you", "I am a bot, so I don't have feelings, but thanks for asking!"},
+            {"what is your name", "I am a simple chatbot."},
+            {"(bye|goodbye)", "Goodbye! If you have more questions, feel free to ask."}
+        };
+
+        // Check user input against predefined rules
+        for (String[] rule : rules) {
+            if (Pattern.compile(rule[0], Pattern.CASE_INSENSITIVE).matcher(userInput).find()) {
+                return rule[1];
+            }
+        }
+
+        // If no match found, provide a default response
+        return "I didn't understand that. Can you please rephrase?";
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Simple Chatbot: Hello! How can I help you? (Type 'bye' to exit)");
+
+        while (true) {
+            System.out.print("You: ");
+            String userInput = scanner.nextLine();
+
+            if (userInput.toLowerCase().equals("bye")) {
+                System.out.println("Simple Chatbot: Goodbye! Have a great day.");
+                break;
+            }
+
+            String response = simpleChatbot(userInput);
+            System.out.println("Simple Chatbot: " + response);
+        }
+
+        scanner.close();
+    }
+}
