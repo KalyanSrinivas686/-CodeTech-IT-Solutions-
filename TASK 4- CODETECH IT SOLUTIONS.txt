@@ -1,0 +1,64 @@
+import java.util.HashMap;
+import java.util.Map;
+
+public class MovieRecommendationSystem {
+    // Sample user-item rating matrix
+    private static final int[][] userItemMatrix = {
+            {4, 5, 0, 0, 0},
+            {0, 0, 5, 4, 0},
+            {0, 0, 0, 0, 3},
+            {2, 0, 0, 5, 4},
+            {0, 3, 4, 0, 5}
+    };
+
+    // Function to calculate cosine similarity between two vectors
+    private static double cosineSimilarity(int[] vector1, int[] vector2) {
+        double dotProduct = 0.0;
+        double norm1 = 0.0;
+        double norm2 = 0.0;
+
+        for (int i = 0; i < vector1.length; i++) {
+            dotProduct += vector1[i] * vector2[i];
+            norm1 += Math.pow(vector1[i], 2);
+            norm2 += Math.pow(vector2[i], 2);
+        }
+
+        return dotProduct / (Math.sqrt(norm1) * Math.sqrt(norm2));
+    }
+
+    // Function to get movie recommendations for a user
+    private static Map<String, Double> getMovieRecommendations(int[] userPreferences) {
+        Map<String, Double> predictedRatings = new HashMap<>();
+
+        // Calculate cosine similarity between users
+        for (int i = 0; i < userItemMatrix.length; i++) {
+            if (i != userPreferences.length - 1) {
+                double similarity = cosineSimilarity(userPreferences, userItemMatrix[i]);
+
+                // Predict ratings for unrated movies
+                for (int j = 0; j < userItemMatrix[i].length; j++) {
+                    if (userItemMatrix[userPreferences.length - 1][j] == 0 && userItemMatrix[i][j] > 0) {
+                        predictedRatings.put("Movie" + (j + 1), predictedRatings.getOrDefault("Movie" + (j + 1), 0.0) +
+                                similarity * userItemMatrix[i][j]);
+                    }
+                }
+            }
+        }
+
+        return predictedRatings;
+    }
+
+    public static void main(String[] args) {
+        // Example user preferences
+        int[] userPreferences = {4, 0, 5, 0, 0};
+
+        // Get movie recommendations
+        Map<String, Double> recommendations = getMovieRecommendations(userPreferences);
+
+        // Display recommended movies and their predicted ratings
+        System.out.println("Recommended Movies:");
+        for (Map.Entry<String, Double> entry : recommendations.entrySet()) {
+            System.out.println(entry.getKey() + ": " + entry.getValue());
+        }
+    }
+}
